@@ -69,7 +69,11 @@ var exports = {
                 test: /\.hbs$/,
                 loader: 'handlebars-loader'
             }
-        ]
+        ],
+        noParse: function (content) 
+        {
+            return /benchmark\.js/.test(content);
+        }
     },
     plugins: [
         new webpack.BannerPlugin(banner)

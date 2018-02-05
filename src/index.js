@@ -1,3 +1,11 @@
+// https://github.com/bestiejs/benchmark.js/issues/128
+import _ from 'lodash';
+import process from 'process';
+
+const benchmark = require('benchmark');
+const Benchmark = benchmark.runInContext({_, process});
+window.Benchmark = Benchmark;
+
 module.exports = function (eruda) 
 {
     let {evalCss} = eruda.util;
