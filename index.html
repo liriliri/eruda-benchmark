@@ -1,46 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <title>Eruda-benchmark</title>
-    </head>
-    <body>
-        <script src="node_modules/eruda/eruda.min.js"></script>
-        <script>eruda.init({tool: []});</script>
-        <script src="assets/eruda-benchmark.js"></script>
-        <script>eruda.add(erudaBenchmark).show('benchmark').show();</script>
-        <script>
-            var benchmark = eruda.get('benchmark');
-            
-            benchmark.add('Test', function () 
-            {
-                var arr = new Array(10000); 
-                for (var i = 0; i < 10000; i++) arr[i] = i * 2;
-            });
-            benchmark.add('Test Suite', [
-                {
-                    name: 'RegExp#test',
-                    fn: function () 
-                    {
-                        /o/.test('Hello World!');
-                    }
-                },
-                {
-                    name: 'String#indexOf',
-                    fn: function () 
-                    {
-                        'Hello World!'.indexOf('o') > -1;
-                    }
-                },
-                {
-                    name: 'String#match',
-                    fn: function ()
-                    {
-                        !!'Hello World!'.match(/o/);
-                    }
-                }
-            ]);
-        </script>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>Eruda-benchmark</title>
+  </head>
+  <body>
+    <script src="node_modules/eruda/eruda.js"></script>
+    <script>
+      eruda.init({ tool: [] })
+    </script>
+    <script src="assets/eruda-benchmark.js"></script>
+    <script>
+      eruda
+        .add(erudaBenchmark)
+        .show('benchmark')
+        .show()
+    </script>
+    <script>
+      var benchmark = eruda.get('benchmark')
+
+      benchmark.add('Test', function() {
+        var arr = new Array(10000)
+        for (var i = 0; i < 10000; i++) arr[i] = i * 2
+      })
+      benchmark.add('Test Suite', [
+        {
+          name: 'RegExp#test',
+          fn: function() {
+            ;/o/.test('Hello World!')
+          }
+        },
+        {
+          name: 'String#indexOf',
+          fn: function() {
+            'Hello World!'.indexOf('o') > -1
+          }
+        },
+        {
+          name: 'String#match',
+          fn: function() {
+            !!'Hello World!'.match(/o/)
+          }
+        }
+      ])
+    </script>
+  </body>
 </html>

@@ -1,7 +1,7 @@
 <ul>
     {{#each benches}}
         <li>
-            <h2 class="eruda-title">{{name}}<span class="eruda-status" style="background: {{color}}">{{status}}</span></h2>
+            <h2 class="eruda-title">{{name}}<span class="eruda-status">{{status}}</span></h2>
             <div class="eruda-result" data-idx="{{@key}}">{{#if result}}{{{result}}}{{/if}}</div>
             <div class="eruda-btn {{#if isRunning}}eruda-disabled{{else}}eruda-run{{/if}}" data-idx="{{@key}}">Run</div>
         </li>
