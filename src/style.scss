@@ -48,7 +48,7 @@
     .btn {
       background: var(--darker-background);
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s;
       color: var(--foreground);
       padding: 10px;
       text-align: center;
@@ -57,6 +57,7 @@
         background: var(--highlight);
       }
       &.disabled {
+        cursor: default;
         background: var(--highlight);
         &:active {
           background: var(--highlight);

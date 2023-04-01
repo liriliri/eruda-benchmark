@@ -1,21 +1,24 @@
-import defBench from './defBench'
+const defBench = require('./defBench')
 // https://github.com/bestiejs/benchmark.js/issues/128
-import _ from 'lodash'
-import process from 'process'
-
+const _ = require('lodash')
+const each = require('licia/each')
+const $ = require('licia/$')
+const isArr = require('licia/isArr')
+const escape = require('licia/escape')
+const map = require('licia/map')
+const process = require('process')
 const benchmark = require('benchmark')
 const Benchmark = benchmark.runInContext({ _, process })
 window.Benchmark = Benchmark
 
-module.exports = function(eruda) {
-  let { evalCss, each, $, isArr } = eruda.util
+module.exports = function (eruda) {
+  let { evalCss } = eruda.util
 
   class BenchmarkTool extends eruda.Tool {
     constructor() {
       super()
       this.name = 'benchmark'
       this._style = evalCss(require('./style.scss'))
-      this._tpl = require('./template.hbs')
 
       this._benches = []
     }
@@ -49,7 +52,7 @@ module.exports = function(eruda) {
         name,
         result: null,
         stores: [],
-        status: 'ready'
+        status: 'ready',
       }
 
       let suite = new Benchmark.Suite(name, {
@@ -81,7 +84,7 @@ module.exports = function(eruda) {
 
           bench.result = formatBenches(bench.stores)
           self._render()
-        }
+        },
       })
 
       each(fns, ({ name, fn }) => suite.add(name, fn))
@@ -124,11 +127,11 @@ module.exports = function(eruda) {
 
             bench.result = formatBench(this)
             self._render()
-          }
+          },
         }),
         name,
         result: null,
-        status: 'ready'
+        status: 'ready',
       }
       benches.push(bench)
 
@@ -160,11 +163,27 @@ module.exports = function(eruda) {
     _render() {
       let benches = this._benches
 
-      each(benches, bench => {
+      each(benches, (bench) => {
         bench.isRunning = bench.status === 'running'
       })
 
-      this._$el.html(this._tpl({ benches }))
+      const html = `<ul>
+        ${map(benches, (bench, idx) => {
+          return `<li>
+            <h2 class="eruda-title">${escape(
+              bench.name
+            )}<span class="eruda-status">${bench.status}</span></h2>
+            <div class="eruda-result" data-idx="${idx}">${
+            bench.result || ''
+          }</div>
+            <div class="eruda-btn ${
+              bench.isRunning ? 'eruda-disabled' : 'eruda-run'
+            }" data-idx="${idx}">Run</div>
+          </li>`
+        }).join('')}
+      </ul>`
+
+      this._$el.html(html)
 
       return this
     }
@@ -187,7 +206,7 @@ module.exports = function(eruda) {
     _bindEvent() {
       let self = this
 
-      this._$el.on('click', '.eruda-run', function() {
+      this._$el.on('click', '.eruda-run', function () {
         let idx = $(this).data('idx')
 
         self._run(idx)

@@ -15,37 +15,34 @@
     </script>
     <script src="assets/eruda-benchmark.js"></script>
     <script>
-      eruda
-        .add(erudaBenchmark)
-        .show('benchmark')
-        .show()
+      eruda.add(erudaBenchmark).show('benchmark').show()
     </script>
     <script>
       var benchmark = eruda.get('benchmark')
 
-      benchmark.add('Test', function() {
+      benchmark.add('Test', function () {
         var arr = new Array(10000)
         for (var i = 0; i < 10000; i++) arr[i] = i * 2
       })
       benchmark.add('Test Suite', [
         {
           name: 'RegExp#test',
-          fn: function() {
+          fn: function () {
             ;/o/.test('Hello World!')
-          }
+          },
         },
         {
           name: 'String#indexOf',
-          fn: function() {
+          fn: function () {
             'Hello World!'.indexOf('o') > -1
-          }
+          },
         },
         {
           name: 'String#match',
-          fn: function() {
+          fn: function () {
             !!'Hello World!'.match(/o/)
-          }
-        }
+          },
+        },
       ])
     </script>
   </body>

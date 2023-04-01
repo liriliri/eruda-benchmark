@@ -1,13 +1,10 @@
 # eruda-benchmark
 
 [![NPM version][npm-image]][npm-url]
-[![Build status][travis-image]][travis-url]
 [![License][license-image]][npm-url]
 
 [npm-image]: https://img.shields.io/npm/v/eruda-benchmark.svg
 [npm-url]: https://npmjs.org/package/eruda-benchmark
-[travis-image]: https://img.shields.io/travis/liriliri/eruda-benchmark.svg
-[travis-url]: https://travis-ci.org/liriliri/eruda-benchmark
 [license-image]: https://img.shields.io/npm/l/eruda-benchmark.svg
 
 Eruda plugin for running JavaScript benchmarks.

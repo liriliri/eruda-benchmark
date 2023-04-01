@@ -7,7 +7,7 @@ function fib(num)
 let arr = new Array(100000);
 arr.fill(1);
 
-export default [
+module.exports = [
     {
         name: 'fib(5)',
         fn() 

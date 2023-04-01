@@ -1,92 +1,104 @@
-var autoprefixer = require('autoprefixer'),
-  postcss = require('postcss'),
-  webpack = require('webpack'),
-  pkg = require('./package.json'),
-  classPrefix = require('postcss-class-prefix')
+const autoprefixer = require('autoprefixer')
+const postcss = require('postcss')
+const webpack = require('webpack')
+const path = require('path')
+const pkg = require('./package.json')
+const classPrefix = require('postcss-class-prefix')
+const TerserPlugin = require('terser-webpack-plugin')
 
-var isProduction = process.argv.indexOf('-p') > -1,
-  banner = pkg.name + ' v' + pkg.version + ' ' + pkg.homepage
+const banner = pkg.name + ' v' + pkg.version + ' ' + pkg.homepage
 
-var exports = {
-  devtool: 'source-map',
-  entry: './src/index.js',
-  devServer: {
-    contentBase: './',
-    port: 3000
-  },
-  output: {
-    path: __dirname,
-    filename: 'eruda-benchmark.js',
-    publicPath: '/assets/',
-    library: ['erudaBenchmark'],
-    libraryTarget: 'umd'
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['env'],
-            plugins: ['transform-runtime']
-          }
-        }
+module.exports = (env, argv) => {
+  const config = {
+    devtool: 'source-map',
+    entry: './src/index.js',
+    devServer: {
+      static: {
+        directory: path.join(__dirname, './'),
       },
-      {
-        test: /\.scss$/,
-        loaders: [
-          'css-loader',
-          {
-            loader: 'postcss-loader',
+      port: 8080,
+    },
+    output: {
+      path: __dirname,
+      filename: 'eruda-benchmark.js',
+      publicPath: '/assets/',
+      library: ['erudaBenchmark'],
+      libraryTarget: 'umd',
+    },
+    resolve: {
+      fallback: {
+        process: require.resolve('process/browser'),
+      },
+    },
+    module: {
+      noParse: function (content) {
+        return /benchmark\.js/.test(content)
+      },
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
             options: {
-              plugins: function() {
-                return [
-                  postcss.plugin('postcss-namespace', function() {
-                    // Add '.dev-tools .tools ' to every selector.
-                    return function(root) {
-                      root.walkRules(function(rule) {
-                        if (!rule.selectors) return rule
-
-                        rule.selectors = rule.selectors.map(function(selector) {
-                          return '.dev-tools .tools ' + selector
-                        })
-                      })
-                    }
-                  }),
-                  classPrefix('eruda-'),
-                  autoprefixer
-                ]
-              }
-            }
+              sourceType: 'unambiguous',
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-transform-runtime'],
+            },
           },
-          'sass-loader'
-        ]
-      },
-      {
-        test: /\.hbs$/,
-        loader: 'handlebars-loader'
-      }
-    ],
-    noParse: function(content) {
-      return /benchmark\.js/.test(content)
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: [
+                    postcss.plugin('postcss-namespace', function () {
+                      // Add '.dev-tools .tools ' to every selector.
+                      return function (root) {
+                        root.walkRules(function (rule) {
+                          if (!rule.selectors) return rule
+
+                          rule.selectors = rule.selectors.map(function (
+                            selector
+                          ) {
+                            return '.dev-tools .tools ' + selector
+                          })
+                        })
+                      }
+                    }),
+                    classPrefix('eruda-'),
+                    autoprefixer,
+                  ],
+                },
+              },
+            },
+            'sass-loader',
+          ],
+        },
+      ],
+    },
+    plugins: [new webpack.BannerPlugin(banner)],
+  }
+
+  if (argv.mode === 'production') {
+    config.optimization = {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
+          extractComments: false,
+        }),
+      ],
     }
-  },
-  plugins: [new webpack.BannerPlugin(banner)]
-}
+  }
 
-if (isProduction) {
-  exports.devtool = false
-  exports.output.filename = 'eruda-benchmark.min.js'
-  exports.plugins = exports.plugins.concat([
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      comments: /eruda-benchmark/
-    })
-  ])
+  return config
 }
-
-module.exports = exports
